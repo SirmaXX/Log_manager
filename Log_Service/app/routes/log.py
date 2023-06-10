@@ -10,19 +10,24 @@ log = APIRouter()
 now=strftime("%Y-%m-%d %H:%M:%S", gmtime())
 
 
+
+#HTTP Requestler için endpointler
+
 @log.get('/',description="logları listeleyen request")
-async def find_all_log():
+async def distinct_log():
     return serializeList(conn.testlogdb.log.find())
+
 
 
 @log.get('/{id}',description="tekil logu listeleyen request")
 async def find_one_log(id):
     return serializeDict(conn.testlogdb.log.find_one({"_id":ObjectId(id)}))
 
+
 @log.post('/',description="log oluşturan post requesti")
 async def create_log(log: Log):
     conn.testlogdb.log.insert_one(dict(log))
-    return serializeList(conn.testlogdb .log.find())
+    return serializeList(conn.testlogdb.log.find())
 
 @log.put('/{id}',description="log güncelleştiren put requesti")
 async def update_log(id,log: Log):

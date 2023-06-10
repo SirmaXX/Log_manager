@@ -19,10 +19,25 @@ class LogInfo(enum.Enum):
 
 class  Log(BaseModel):
     logtype :LogInfo
+    user_agent:str
     host :str
     port :str
     method :str
     path :str
+    message :str
+    create_time :datetime
+   
+    class Config:  
+        use_enum_values = True
+        arbitrary_types_allowed = True
+
+
+
+
+
+class  AppLog(BaseModel):
+    logtype :LogInfo
+    method :str
     message :str
     create_time :datetime
    
