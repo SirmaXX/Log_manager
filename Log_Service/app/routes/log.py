@@ -4,6 +4,7 @@ from app.config.db import conn
 from app.schemas.log import serializeDict, serializeList
 from time import gmtime, strftime
 from bson import ObjectId
+
 log = APIRouter() 
 
 
@@ -17,6 +18,33 @@ now=strftime("%Y-%m-%d %H:%M:%S", gmtime())
 async def distinct_log():
     return serializeList(conn.testlogdb.log.find())
 
+
+@log.get('/different/', description="Logları listeleyen request")
+async def distinct_log():
+    distinct_user_agents = conn.testlogdb.log.distinct('user_agent')
+    return distinct_user_agents
+
+
+@log.get('/differentcount/', description="Logları listeleyen request")
+async def distinct_log():
+    pipeline = [
+        {
+            '$group': {
+                '_id': '$user_agent',
+                'count': {'$sum': 1}
+            }
+        },
+        {
+            '$project': {
+                '_id': 0,
+                'user_agent': '$_id',
+                'count': 1
+            }
+        }
+    ]
+
+    result = conn.testlogdb.log.aggregate(pipeline)
+    return list(result)
 
 
 @log.get('/{id}',description="tekil logu listeleyen request")
